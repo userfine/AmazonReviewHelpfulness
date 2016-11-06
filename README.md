@@ -5,25 +5,27 @@ It is quite convenient for people to shop online, e.g. on Amazon, however, the q
 
 
 ## Data descriptions
-The dataset of this project comes from http://jmcauley.ucsd.edu/data/amazon/, which contains product reviews and metadata from Amazon. Among various datasets provided, the product review dataset(18GB) is chosen because we will mainly focus on the deduplicated review text data and helpfulness rating data of the review text. This dataset contains 83.68 million reviews of 24 different categories, spanning May 1996 - July 2014. An json-format example of a dataset record is listed below:
+The dataset of this project comes from http://jmcauley.ucsd.edu/data/amazon/, which contains product reviews and metadata from Amazon.  
+Among various datasets provided, the product review dataset(18GB) is chosen because we will mainly focus on the deduplicated review text data and helpfulness rating data of the review text. This dataset contains 83.68 million reviews of 24 different categories, spanning May 1996 - July 2014. 
+An json-format example of a dataset record is listed below:  
 {
-  "reviewerID": "A2SUAM1J3GNN3B",
-  "asin": "0000013714",
-  "reviewerName": "J. McDonald",
-  "helpful": [2, 3],
-  "reviewText": "I bought this for my husband who plays the piano.  He is having a wonderful time playing these old hymns.  The music  is at times hard to read because we think the book was published for singing from more than playing from.  Great purchase though!",
-  "overall": 5.0,
-  "summary": "Heavenly Highway Hymns",
-  "unixReviewTime": 1252800000,
-  "reviewTime": "09 13, 2009"
-}
+  "reviewerID": "A2SUAM1J3GNN3B",  
+  "asin": "0000013714",  
+  "reviewerName": "J. McDonald",  
+  "helpful": [2, 3],  
+  "reviewText": "I bought this for my husband who plays the piano.  He is having a wonderful time playing these old hymns.  The music  is at times hard to read because we think the book was published for singing from more than playing from.  Great purchase though!",  
+  "overall": 5.0,  
+  "summary": "Heavenly Highway Hymns",  
+  "unixReviewTime": 1252800000,  
+  "reviewTime": "09 13, 2009"  
+}  
 
 
 ## Feasibility and Risks
 ###Feasibility
 The main goal of this project is to build a review recommender system.   
 There are mainly two kinds of approaches to design a recommender system, collaborative filtering and content-based filtering. In this project, content-based filtering methods are chosen because we are trying to infer the helpfulness from the content of review text.  
-Content-based filtering methods are based on a description of the items and a profile of the user’s preference.To abstract the features of the items in the system, an item presentation algorithm is applied. Some widely used algorithm are tf–idf representation (vector space representation) or LDA(latent Dirichlet allocation) algorithm. These various algorithms will be used to generate the fitting and predictive model of item-review-rating.
+Content-based filtering methods are based on a description of the items and a profile of the user’s preference.To abstract the features of the items in the system, an item presentation algorithm is applied. Some widely used algorithm are tf–idf representation (vector space representation) or LDA(latent Dirichlet allocation) algorithm. These various algorithms will be used to generate the fitting and predictive model of item-review-rating.  
 After generating item-review-rating model, we can use machine learning algorithms to fit this model, choose best-performing model and select corresponding parameters by cross validation. And then use this best-performing model to predict the new review text helpfulness.
 
 ###Risk
