@@ -6,8 +6,11 @@ It is quite convenient for people to shop online, e.g. on Amazon, however, the q
 
 ## Data descriptions
 The dataset of this project comes from http://jmcauley.ucsd.edu/data/amazon/, which contains product reviews and metadata from Amazon.  
-Among various datasets provided, the product review dataset(18GB) is chosen because we will mainly focus on the deduplicated review text data and helpfulness rating data of the review text. This dataset contains 83.68 million reviews of 24 different categories, spanning May 1996 - July 2014. 
+
+Among various datasets provided, the product review dataset(18GB) is chosen because we will mainly focus on the deduplicated review text data and helpfulness rating data of the review text. This dataset contains 83.68 million reviews of 24 different categories, spanning May 1996 - July 2014.
+
 An json-format example of a dataset record is listed below:  
+```
 {
   "reviewerID": "A2SUAM1J3GNN3B",  
   "asin": "0000013714",  
@@ -19,24 +22,38 @@ An json-format example of a dataset record is listed below:
   "unixReviewTime": 1252800000,  
   "reviewTime": "09 13, 2009"  
 }  
+```
 
 
 ## Feasibility and Risks
-###Feasibility
+### Feasibility
 The main goal of this project is to build a review recommender system.   
-There are mainly two kinds of approaches to design a recommender system, collaborative filtering and content-based filtering. In this project, content-based filtering methods are chosen because we are trying to infer the helpfulness from the content of review text.  
-Content-based filtering methods are based on a description of the items and a profile of the user’s preference.To abstract the features of the items in the system, an item presentation algorithm is applied. Some widely used algorithm are tf–idf representation (vector space representation) or LDA(latent Dirichlet allocation) algorithm. These various algorithms will be used to generate the fitting and predictive model of item-review-rating.  
-After generating item-review-rating model, we can use machine learning algorithms to fit this model, choose best-performing model and select corresponding parameters by cross validation. And then use this best-performing model to predict the new review text helpfulness.
 
-###Risk
+There are mainly two kinds of approaches to design a recommender system, collaborative filtering and content-based filtering. In this project, content-based filtering methods are chosen because we are trying to infer the helpfulness from the content of review text.  
+
+Content-based filtering methods are based on a description of the items and a profile of the user’s preference. To extract the features of the items in a system, an item presentation algorithm is applied. Some widely used algorithms are tf–idf representation (vector space representation) or LDA(latent Dirichlet allocation) algorithm. These various algorithms will be used to generate the fitting and predictive model of item-review-rating.  
+
+After generating item-review-rating model, we can use some machine learning algorithms to fit this model, choose best-performing model and select corresponding parameters by cross validation. And then use this best-performing model to predict the helpfulness of new review texts.
+
+### Risks
 1. The item-review-rating presentation models might not be convex, which might require some advanced solution skills.
+
 2. With large datasets, the fitting time will be considerably long. How to reduce the fitting time will also be a huge challenge.
 
 
 ## Deliverables
 1. Report of our findings, presenting a comprehensive list of features related to the helpfulness of a review, and a model to predict the helpfulness of a recently composed review.
+
 2. A pipeline/some scripts to generate the exact results as stated in our report.
-3. **anything else?**
 
 
-## Time plan (**Weekly/Semi-monthly?**)
+## Time plan
+The following milestones should be followed roughly.
+
+1. Nov. 7th - Nov. 20th: reading papers and get familiar with relevant works. List potential models and methods that we might use in the future.
+
+2. Nov. 21st - Dec. 4th: Extract features with different methods, and train the model with 60% of the data set.
+
+3. Dec. 5th - Dec. 18th: Improve the accuracy and finalize a model with best performance.
+
+4. Dec. 19th - Jan. 1st: writing report to present our work.
