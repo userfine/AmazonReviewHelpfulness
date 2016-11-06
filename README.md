@@ -42,9 +42,12 @@ After generating item-review-rating model, we can use some machine learning algo
 
 
 ## Deliverables
-1. Report of our findings, presenting a comprehensive list of features related to the helpfulness of a review, and a model to predict the helpfulness of a recently composed review.
 
-2. A pipeline/some scripts to generate the exact results as stated in our report.
+1. Several models to predict the helpfulness of a recently composed review, and a detailed comparison between different models as well as a most outperformed one.
+
+2. A pipeline or some scripts to generate the exact results as stated in our report.
+
+3. A report which illustrates our findings and presents a comprehensive list of features related to the helpfulness of a review.
 
 
 ## Time plan
