@@ -11,9 +11,10 @@ from pyspark.mllib.evaluation import RegressionMetrics
 
 def get_helpfulness_label(helpfulness):
     """
-    map helpfulness to categorical values
-    helpfulness is within [-1, 1]
-    our label will be 4 categories
+    map helpfulness to categorical values, our label will be 4 categories
+
+    Params:
+        helpfulness(float): (likes-dislikes)/(likes+dislikes), in range [-1, 1]
     """
     if helpfulness < -0.5:
         return 0.0
@@ -26,6 +27,15 @@ def get_helpfulness_label(helpfulness):
 
 
 def get_one_category(sql, category, save=True): 
+    """
+    get data of one category
+
+    Params:
+        category(str): category of amazon products
+        save(bool): save results as parquet and json format
+
+    Return: dataframe
+    """
     try:
         res = sql.read.parquet('hdfs:///user/jbao/{}.parquet'.format(category))
         print('Data restored from parquet')
@@ -33,13 +43,14 @@ def get_one_category(sql, category, save=True):
         print('No data found! Generating new parquet data')
         complete = sql.read.json('hdfs:/datasets/amazon-reviews/complete.json')
         metadata = sql.read.json('hdfs:/datasets/amazon-reviews/metadata.json')
+        # join two dataframes to select one category 
         one_cat = metadata.filter(metadata['categories'][0][0] == category)
         one_cat_res = one_cat.select('asin', 'categories').join(
                 complete.select('reviewText', 'asin', 'helpful', 'summary', 
                     'overall', 'reviewerID'), 'asin') 
 
         helpful = one_cat_res['helpful']
-        s = helpful[1]
+        s = helpful[1]  # sum
         diff = 2 * helpful[0] - helpful[1]
         # calculate helpfulness - (like-dislike)/(like+dislike)
         helpfulness = when(s != 0, diff/s).otherwise(0)
@@ -65,12 +76,22 @@ def get_one_category(sql, category, save=True):
         if save:
             res.write.parquet('hdfs:///user/jbao/{}.parquet'.format(category))
             res = res.drop('price').filter(res['helpful'][1] >= 10)
+            # save to one json file
             res.coalesce(1).write.json('{}.json'.format(category))
             print('Data saved in hdfs data store!')
 
     return res
 
+
 def train(records):
+    """
+    use spark mllib and ml modules to do classification
+    TFIDF and Word2Vec are used for text representation
+
+    Params:
+        records(DataFrame)
+    """
+    # build a pipeline
     indexer = StringIndexer(inputCol='helpful_cat', outputCol='label')
     tokenizer = Tokenizer(inputCol='reviewText', outputCol='words')
     stages = [indexer, tokenizer]
@@ -119,12 +140,15 @@ def main():
     sc = SparkContext.getOrCreate(conf=conf)
     sql = SQLContext(sc)
 
+    # Extract data first
     # for cat in ['Books', 'Electronics', 'Movies and TV', 'Home and Kitchen',
             # 'Kindle Store', 'Sports and Outdoors', 'Pet Supplies', 
             # 'Health and Personal Care', 'Musical Instruments', 
             # 'Grocery and Gourmet Food', 'Office Products']:
         # print('processing {}'.format(cat))
         # get_one_category(sql, cat)
+
+    # Classification
     for cat in ['Books', 'Electronics', 'Kindle Store', 'Pet Supplies', 
             'Musical Instruments', 'Office Products']:
         records = get_one_category(sql, cat)
