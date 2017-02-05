@@ -1,3 +1,28 @@
+# Update (Final notes)
+
+## Data
+We uploaded three files which are under the Github file limit (100mb), namely 
+Kindle Store-LIWC.csv, Musical Instruments-LIWC.csv and Pet Supplies-LIWC.csv.
+LIWC features are included in these files. 
+
+## Notebooks
+1. Statistics.ipynb presents some interesting statistics of our dataset,
+including the variable distribution and relations between some feature and
+helpfulness.
+
+2. machine_learning_result.ipynb contains the results of some regression
+models.
+
+## Scripts
+1. spark.py: it contains the main procedure to preprocess large data with
+spark, e.g. extracting data features. It also contains our previous classification
+method, which didn't work out well, so we didn't present the results.
+
+2. train_regression.py: due to the constraints of spark ml lib, we use more
+regression models in sklearn in this scripts. It contains a pipeline to train
+different models.
+
+
 # Proposal
 
 ## Abstract
