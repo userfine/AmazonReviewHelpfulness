@@ -7,6 +7,7 @@ from sklearn.linear_model import Ridge
 from sklearn.model_selection import ShuffleSplit, cross_val_score, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR, LinearSVR
+from sklearn.linear_model import LogisticRegression
 from datetime import datetime as dt
 from sklearn.metrics import mean_squared_error
 
@@ -77,10 +78,12 @@ def train(model, params):
     Main train procedures. Use a pipeline to do cross validation
     """
     for cat in ['Electronics', 'Beauty',
-            'Kindle Store', 'Pet Supplies', 
+            'Kindle Store',
+                 'Pet Supplies', 
             'Musical Instruments', 
             'Office Products']:
         print('{} start! {}'.format(cat, dt.now()))
+        #print('using model' + str(model))
         data = pd.read_csv('{}-LIWC.csv'.format(cat)).as_matrix()
         x = data[:, FEATURE_INDEX + LIWC_INDEX]
         y = data[:, Y]
@@ -94,19 +97,20 @@ def train(model, params):
         
         # print results
         print("Best score: {:.4f}".format(cv.best_score_))
-        print("Best parameters set:")
+        #print("Best parameters set:")
         best_parameters = cv.best_estimator_.get_params()
         for param_name in sorted(params.keys()):
             print("\t{}: {}".format(param_name, best_parameters[param_name]))
         print("Feature importance:")
-        feat = {k:v for k, v in zip(COLUMNS, cv.best_estimator.feature_importances_)}
-        for k, v in sorted(feat.items(), key=itemgetter(1)):
-            print('{}: {:.5f}'.format(k, v))
+        if isinstance(model, RandomForestRegressor):
+            feat = {k:v for k, v in zip(COLUMNS, cv.best_estimator_.feature_importances_)}
+            for k, v in sorted(feat.items(), key=itemgetter(1)):
+                print('{}: {:.5f}'.format(k, v))
+        print('-------------------------------------------------')
+    return feat 
 
-        return cv.best_score_, best_parameters
 
-
-N_JOBS = 20
+N_JOBS = -1
 
 def main():
     # for cat in ['Books', 'Electronics',# 'Beauty',
@@ -118,8 +122,8 @@ def main():
     # Try different models
     rf = RandomForestRegressor()
     rf_params = {
-            'n_estimators': [1, 30, 50],
-            'min_samples_split': [5, 10, 20],
+            'n_estimators': [1, 10, 20],
+            'min_samples_split': [2, 5, 10],
             'min_samples_leaf': [1, 5, 10]
             }
 
@@ -129,22 +133,20 @@ def main():
             'epsilon': [0.1, 1, 5]
             }
 
-    lr = LogisticRegression(max_iter=5000)
-    lr_params = {
-            'C': [0.1, 1.0, 5],
-            'penalty': ['l1', 'l2']
-            }
-
     rr = Ridge()
     rr_params = {
             'alpha': [1.0, 5.0, 10]
             }
 
     #train_once(rr, x, y, sp)
-    models = [rf, svr, lr, rr]
-    model_params = [rf_params, svr_params, lr_params, rr_params]
+    models = [rf, svr,  rr]
+    #models = [rf]
+    model_params = [rf_params, svr_params, rr_params]
+    model_score = []
     for model, params in zip(models, model_params):
-        train(model, params)
+        model_score.append(train(model, params))
+    
+    return model_score
 
 
 if __name__ == '__main__':
